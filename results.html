@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="tableExport.js"></script>
+<script type="text/javascript" src="jquery.base64.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.2/js/jquery.tablesorter.min.js"></script>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.2/css/theme.blue.min.css' type='text/css' />
+<script>
+    function GotoPubmed(pubmedID)
+{
+var url="https://www.ncbi.nlm.nih.gov/pubmed/" + pubmedID;
+location.href=url;
+return false;
+}
+    $(document).ready(function() {
+
+        function exportTableToCSV($table, filename) {
+                var $headers = $table.find('tr:has(th)')
+                    ,$rows = $table.find('tr:visible:has(td)')
+
+
+                    // Temporary delimiter characters unlikely to be typed by keyboard
+                    // This is to avoid accidentally splitting the actual contents
+                    ,tmpColDelim = String.fromCharCode(11) // vertical tab character
+                    ,tmpRowDelim = String.fromCharCode(0) // null character
+
+                    // actual delimiter characters for CSV format
+                    ,colDelim = '","'
+                    ,rowDelim = '"\r\n"';
+
+                    // Grab text from table into CSV formatted string
+                    var csv = '"';
+                    csv += formatRows($headers.map(grabRow));
+                    csv += rowDelim;
+                    csv += formatRows($rows.map(grabRow)) + '"';
+
+                    // Data URI
+                    var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+                // For IE (tested 10+)
+                if (window.navigator.msSaveOrOpenBlob) {
+                    var blob = new Blob([decodeURIComponent(encodeURI(csv))], {
+                        type: "text/csv;charset=utf-8;"
+                    });
+                    navigator.msSaveBlob(blob, filename);
+                } else {
+                    $(this)
+                        .attr({
+                            'download': filename
+                            ,'href': csvData
+                            //,'target' : '_blank' //if you want it to open in a new window
+                    });
+                }
+
+                //------------------------------------------------------------
+                // Helper Functions
+                //------------------------------------------------------------
+                // Format the output so it has the appropriate delimiters
+                function formatRows(rows){
+                    return rows.get().join(tmpRowDelim)
+                        .split(tmpRowDelim).join(rowDelim)
+                        .split(tmpColDelim).join(colDelim);
+                }
+                // Grab and format a row from the table
+                function grabRow(i,row){
+
+                    var $row = $(row);
+                    //for some reason $cols = $row.find('td') || $row.find('th') won't work...
+                    var $cols = $row.find('td');
+                    if(!$cols.length) $cols = $row.find('th');
+
+                    return $cols.map(grabCol)
+                                .get().join(tmpColDelim);
+                }
+                // Grab and format a column from the table
+                function grabCol(j,col){
+                    var $col = $(col),
+                        $text = $col.text();
+
+                    return $text.replace('"', '""'); // escape double quotes
+
+                }
+            }
+
+
+            // This must be a hyperlink
+            $("#export").click(function (event) {
+                // var outputFile = 'export'
+                var outputFile = "SNPresults"
+                outputFile = outputFile.replace('.csv','') + '.csv'
+
+                // CSV
+                exportTableToCSV.apply(this, [$('#dvData > table'), outputFile]);
+
+                // IF CSV, don't do event.preventDefault() or return false
+                // We actually need this to be a typical hyperlink
+            });
+
+        //-------------------
+
+    $("#myTable").tablesorter({
+
+    cssChildRow: 'invisible-table-row',
+
+        // pass the headers argument and assing a object
+        headers: {
+            // assign the secound column (we start counting zero)
+            6: {
+                // disable it by setting the property sorter to false
+                sorter: false
+            },
+            // assign the third column (we start counting zero)
+            9: {
+                // disable it by setting the property sorter to false
+                sorter: false
+            }
+        }
+    });
+        $('.myButton').click(function ()
+                 {
+                     var $element = $(this);
+                    $element.text(function(i, text) {
+                    return text == $element.data('default-text') ? $element.data('new-text')
+                                                            : $element.data('default-text');
+                     });
+
+                     if ( $(this).value== "+") $(this).value== "-";
+                        else this.value = "+";
+
+                     $(this).closest('tr').nextAll('tr').each( function()
+                     {
+
+                         if ($(this).is('.RowToClick'))
+                        {
+                           return false;
+                        }
+                        $(this).toggle();
+                     });
+                 });
+});
+
+</script>
+
+<style>
+body { font-family: sans-serif; }
+a, h1{ color: #1874ce; }
+h1{ font-family: 'Georgia', serif; margin: 0; }
+h1{border-bottom: 1px solid #eee; }
+h2 { padding-top: 1em ; padding-left: 1em ; font-size: 0.8em; border: 4px solid #ccc; font-weight: normal;}
+.page { margin: 2em auto; width: auto; border: 15px solid #ccc;
+padding: 40em ; resize: both; overflow: auto;}
+.entries { list-style: none; margin: 0; padding: 0; }
+.entries li { margin: 0.8em 1.2em; }
+.entries li h2 { margin-left: -1em; }
+.add-entry { font-size: 0.9em; border-bottom: 1px solid #ccc; }
+.add-entry dl { font-weight: bold; }
+.metanav { text-align: right; font-size: 0.8em; padding: 0.3em;
+margin-bottom: 1em; background: #fafafa; }
+.flash { background: #cee5F5; padding: 0.5em;
+border: 1px solid #aacbe2; }
+.error { background: #f0d6d6; padding: 0.5em; }
+tr:nth-of-ty pe(odd) {  background-color:aliceblue;}
+th{background-color: #1874ce ; }
+table{font-size: 0.8em;}
+.a
+{
+    max-width: 600px;
+
+}
+</style>
+
+</head>
+<title>SNPcurator Results</title>
+<page>
+<br>
+<br>
+<h1>SNP <i> Curator </i></h1>
+<h2>
+    <form >
+        <div class='button' style="text-align: left">
+            Results for <b>{{ disease }}</b>:
+            <br>
+            - A total of <b>{{ AbsrtactCount }}</b> articles were fetched by PubMed.<br>
+            - The extracted list of abstracts was shortened to <b>{{ AbsrtactSNPCount }}</b> via selecting those comprised of SNP mentions.<br>
+            - <b>{{ PaperCount }}</b> PubMed article(s) had statistical results reported withing the abstract text with a total of <b>{{ SNPCount}}</b> SNP pairs.
+            <br>
+            <a href = "/">Go back to home page</a>
+            <a href="#" id ="export" role='button'>Export Data to CSV File</a>
+        </div>
+    </form>
+</h2>
+<div class='container'>
+    <div id="dvData">
+    <table id='myTable' cellspacing="1" class="tablesorter-blue">
+    <thead>
+        <tr>
+           <th>SNP</th>
+           <th>PMID</th>
+           <th>Title</th>
+           <th>Date</th>
+           <th>Pvalue</th>
+           <th>ORvalue</th>
+           <th>Ethnicity</th>
+           <th>Patient group Size</th>
+           <th>Control group Size</th>
+           <th>Frequency</th>
+           <th>Text Evidence</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row_index in range(rows['PMID']|count) %}
+            <tr class="RowToClick" >
+                <td>{{rows["SNP"][row_index]}}</td>
+                <td><a target="_blank" href='https://www.ncbi.nlm.nih.gov/pubmed/{{ rows['PMID'][row_index] }}'  > {{ rows['PMID'][row_index] }}  </a></td>
+                <td class="a">{{rows["Title"][row_index]}}</td>
+                <td>{{rows["Date"][row_index]}}</td>
+                <td> {{rows["Pvalue"][row_index]}}</td>
+                <td> {{rows["ORvalue"][row_index]}}</td>
+                <td> {{rows["Ethnicity"][row_index]}}</td>
+                <td> {{rows["PatientSize"][row_index]}}</td>
+                <td> {{rows["ControlSize"][row_index]}}</td>
+                <td> {{rows["Frequency"][row_index]}}</td>
+                <td><button class="myButton" data-default-text="+" data-new-text="-">+</button></td>
+            </tr>
+            <tr hidden ="true" class="invisible-table-row" ><td colspan="11">{{rows["EvidenceSent"][row_index]}}</td></tr>
+            </tr>
+
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+</div>
+</page>

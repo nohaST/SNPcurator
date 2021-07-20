@@ -50,15 +50,9 @@ def resultss():
     snp_count = session.get('SNPcount')
     paper_count = session.get('PaperCount')
     print("resultss ", snp_count, " from ", paper_count, "Papers")
-    print('More parameters in resultss:')
-    print('Name:', name)
     the_results = session.get('results')
-    print('Results:', len(the_results['PMID']), the_results.keys())
-    print('Results again:', len(session['results']['PMID']), the_results.keys())
     abstract_count = session.get('AbstractCnt')
-    print('Abstract count:', abstract_count, session['AbstractCnt'])
     abstract_snp_count = session.get('AbstractSNPCnt')
-    print('Abstract SNP count:', abstract_snp_count, session['AbstractSNPCnt'])
     return render_template("results.html", disease=name, rows=the_results,
                            SNPCount=snp_count, PaperCount=paper_count, AbsrtactCount=abstract_count,
                            AbsrtactSNPCount=abstract_snp_count)

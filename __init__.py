@@ -34,11 +34,12 @@ def set_session():
 
 @app.route('/resultss', methods=['POST', 'GET'])
 def resultss():
-    session['name']= request.args.get('name', None)
+    session['name'] = request.args.get('name', None)
     session['year1'] = request.args.get('year1', None)
     session['year2'] = request.args.get('year2', None)
     session['NumOfPub'] = request.args.get('NumOfPub', None)
-    cPapers,nAbs,nSP = curate(session['name'], session['year1'], session['year2'], session['NumOfPub'])
+    name = session.get('name')
+    cPapers,nAbs,nSP = curate(name, session['year1'], session['year2'], session['NumOfPub'])
     #print(len(cPapers))
     formulated_results = formulateSNP(cPapers)
     session['results'] = formulated_results[0]
@@ -51,10 +52,9 @@ def resultss():
     paper_count = session.get('PaperCount')
     print("resultss ", snp_count, " from ", paper_count, "Papers")
     print('More parameters in resultss:')
-    name = session.get('name')
-    print('Name:', name, session['name'])
     the_results = session.get('results')
-    print('Results:', the_results, session['results'])
+    print('Results:', the_results)
+    print('Results again:', session['results'])
     abstract_count = session.get('AbstractCnt')
     print('Abstract count:', abstract_count, session['AbstractCnt'])
     abstract_snp_count = session.get('AbstractSNPCnt')

@@ -22,7 +22,7 @@ border: 1px solid #aacbe2; }
 .error { background: #f0d6d6; padding: 0.5em; }
 
 html {
-  background: url(/static/images/dna.jpg) no-repeat center center fixed;
+  background: url(/snpcurator/static/images/dna.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -35,27 +35,25 @@ html {
 </head>
 <div class="page">
     <title>SNPcurator</title>
-    <p align="right"><a href = "/">Go back to home page</a></p>
+    <p align="right"><a href = "/snpcurator">Go back to home page</a></p>
 
         <body>
-            <form action = "/home" method = "post" runat="server"  onsubmit="ShowLoading()">
+            <form action = "/snpcurator/home" method = "post" runat="server"  onsubmit="ShowLoading()">
             <h1></h1>
                 <dl>
-                    <p><b>SNPcurator</b>,
-                        is developed under the Text Analytics In Life Sciences & Health (TAILS) PhD research project by Noha S. Tawfik supervised by
-                        <a target="_blank" href="https://www.uu.nl/staff/default.aspx?Profielpagina=SBrinkkemper">prof. Sjaak Brinkkemper </a>
+                    <p><b>SNPcurator</b>
+                        was developed under the Text Analytics In Life Sciences & Health (TAILS) PhD research project by Dr. Noha S. Tawfik supervised by
+                        <a target="_blank" href="https://www.uu.nl/staff/default.aspx?Profielpagina=SBrinkkemper">Prof. dr. Sjaak Brinkkemper</a>
                         and
-                        <a target="_blank" href="https://www.uu.nl/staff/default.aspx?Profielpagina=MRSpruit">Dr. Marco Spruit </a>
-                        . TAILS is part of
-                        <a target="_blank" href="https://www.uu.nl/en/research/software-systems/organization-and-information/labs/applied-data-science">Applied Data Science Lab</a>
+                        <a target="_blank" href="https://www.universiteitleiden.nl/en/staffmembers/marco-spruit">Prof. dr. Marco Spruit</a>. TAILS is part of the
+                        <a target="_blank" href="https://www.uu.nl/en/research/intelligent-software-systems/natural-language-processing/applied-data-science-lab">Applied Data Science Lab</a>
                         at the department of Information and Computing Sciences of
-                        <a target="_blank" href="https://www.uu.nl/">Utrecht University</a>
-                        If you have questions or comments related to the tools or data on this website, please feel free to contact us on
-                        <a target="_blank" href="mailto:n.s.tawfik@uu.nl">Noha Tawfik</a>
+                        <a target="_blank" href="https://www.uu.nl/">Utrecht University</a>.
+                        If you have questions or comments related to the tools or data on this website, please feel free to <a target="_blank" href="mailto:m.r.spruit@liacs.leidenuniv.nl">contact us</a>
 
 
                         </p>
-                    <a href="C:\\inetpub\\wwwroot\\AppTest\\SNPPhenA_mod.zip" download="SNPPhenA_Mod">Download SNPPhenA_modified dataset</a>
+                    <a href="/SNPPhenA_mod.zip" download="SNPPhenA_Mod">Download</a> SNPPhenA_modified dataset
                     
                     </dl>
       </form>

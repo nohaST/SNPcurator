@@ -1,4 +1,6 @@
 from flask import Flask, redirect, url_for, request, session, render_template
+import sys
+sys.path.insert(0,"/var/www/snpcurator/snpcurator/")
 from autoCurator import curate, nlp
 import time
 app = Flask(__name__)
@@ -32,19 +34,34 @@ def set_session():
 
 @app.route('/resultss', methods=['POST', 'GET'])
 def resultss():
-    session['name']= request.args.get('name', None)
-    cPapers,nAbs,nSP = curate(session.get('name'), session['year1'], session['year2'], session['NumOfPub'])
-    #print(len(cPapers))
-    results = formulateSNP(cPapers)
-    session['results'] = results[0]
-    session['PaperCount'] = results[1]
-    session['SNPcount'] = results[2]
+    session['name'] = request.args.get('name', None)
+    session['year1'] = request.args.get('year1', None)
+    session['year2'] = request.args.get('year2', None)
+    session['NumOfPub'] = request.args.get('NumOfPub', None)
+    name = session.get('name')
+    cPapers,nAbs,nSP = curate(name, session['year1'], session['year2'], session['NumOfPub'])
+    formulated_results = formulateSNP(cPapers)
+    session['results'] = formulated_results[0]
+    session['PaperCount'] = formulated_results[1]
+    session['SNPcount'] = formulated_results[2]
     session['AbstractCnt'] = nAbs
     session['AbstractSNPCnt'] = nSP
-    print("HERE", session['AbstractCnt'], session['AbstractSNPCnt'])
-    print("results ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
-    return render_template("results.html",disease=session.get('name'), rows=session.get('results'),
-                           SNPCount=session.get('SNPcount'), PaperCount=session.get('PaperCount'),AbsrtactCount=session.get('AbstractCnt'),AbsrtactSNPCount=session.get('AbstractSNPCnt'))
+    print("HEREs", session['AbstractCnt'], session['AbstractSNPCnt'])
+    snp_count = session.get('SNPcount')
+    paper_count = session.get('PaperCount')
+    print("resultss ", snp_count, " from ", paper_count, "Papers")
+    print('More parameters in resultss:')
+    print('Name:', name)
+    the_results = session.get('results')
+    print('Results:', len(the_results['PMID']), the_results.keys())
+    print('Results again:', len(session['results']['PMID']), the_results.keys())
+    abstract_count = session.get('AbstractCnt')
+    print('Abstract count:', abstract_count, session['AbstractCnt'])
+    abstract_snp_count = session.get('AbstractSNPCnt')
+    print('Abstract SNP count:', abstract_snp_count, session['AbstractSNPCnt'])
+    return render_template("results.html", disease=name, rows=the_results,
+                           SNPCount=snp_count, PaperCount=paper_count, AbsrtactCount=abstract_count,
+                           AbsrtactSNPCount=abstract_snp_count)
 
 @app.route('/results', methods=['POST', 'GET'])
 def results():
@@ -57,8 +74,8 @@ def results():
     session['SNPcount'] = results[2]
     session['AbstractCnt']=nAbs
     session['AbstractSNPCnt'] = nSP
-    print("HERE",session['AbstractCnt'],session['AbstractSNPCnt'])
-    print("results ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
+    print("HERE1",session['AbstractCnt'],session['AbstractSNPCnt'])
+    print("results1 ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
     return render_template("results.html",disease=session.get('name'), rows=session.get('results'),
                            SNPCount=session.get('SNPcount'), PaperCount=session.get('PaperCount'),AbsrtactCount=session.get('AbstractCnt'),AbsrtactSNPCount=session.get('AbstractSNPCnt'))
 
@@ -123,4 +140,5 @@ app.secret_key = 'tsdhisiusdfdsfaSecsdfsdfrfghdetkey'
 if __name__ == "__main__":
     st = time.time()
     app.run(threaded=True, debug=True)
-    f.write("Run time in main",time.time()  - st)
+    '''with open('myfile.txt', 'a') as f:
+        f.write("Run time in main: " + str(time.time()  - st))'''

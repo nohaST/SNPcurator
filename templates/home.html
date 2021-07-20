@@ -7,7 +7,6 @@
         div.innerHTML = "<br/><br/>Searching PubMed articles relevant to keyword: "+d+" <br /> Loading Results<br/>";
         div.appendChild(img);
         }
-        
 
         document.getElementById("headerTop").style.cursor="wait"
         document.getElementById("headerTop").style.opacity="0.5";
@@ -55,7 +54,7 @@ border: 1px solid #aacbe2; }
 .error { background: #f0d6d6; padding: 0.5em; }
 
 html {
-  background: url(/static/images/dna.jpg) no-repeat center center fixed;
+  background: url(/snpcurator/static/images/dna.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -68,15 +67,15 @@ html {
 </head>
 <div class="page">
     <title>SNPcurator</title>
-    <p align="right"><a href="/About">About</a>  </p>
+    <p align="right"><a href="/snpcurator/About">About</a>  </p>
         <body>
-            <form action = "/home" method = "post" runat="server" onsubmit="ShowLoading()">
+            <form action = "/snpcurator/home" method = "post" runat="server" onsubmit="ShowLoading()">
             <h1>SNP <i> Curator </i></h1>
                 <dl>
                     <p><b>SNPcurator</b>, a Text mining system more oriented towards information extraction specifically in the genome wide and candidate genes studies. The proposed model is constructed out of different NLP modules to form an information extraction tool to aid scientists in their search for relevant disease associated SNPs through a web interface. The motivation behind this research is to create a publically-available, scalable and fully automated curation tool. </p>
                     <p align="center">Enter Disease : <input type = "text" id="tForm" name = "nm"> <a style="font-size: 12px" href="#" onclick="more(this);">Advanced Search</a> </p>
-                    <p id="showMore" style="display: none;font-size:12px; " align="center">Publication years : <input type="number" align="center" style="font-size:12px" min="2000" max="2022" step="1" value="2005" id="tForm2" name = "year1"  /> to <input type="number" style="font-size:12px" min="2000" max="2022" step="1" value="2022" id="tForm3" name = "year2">  Number of Publications : <input  align="center" type="number" style="font-size:12px" step="1" value="3000" id="tForm4" name = "NumOfPub"  />
-                    <p style="font-size:12px" align="center"><i> Examples: <a onclick="ShowLoading('polycystic ovary syndrome')" href="{{ url_for('resultss', name='PCOS',year1=2015,year2=2020,NumOfPub=3000) }}">polycystic ovary syndrome</a>, <a onclick="ShowLoading('skin cancer')" href="{{ url_for('resultss', name='skin cancer',year1=2015,year2=2022,NumOfPub=3000) }}">skin Cancer</a><i>, <a onclick="ShowLoading('Lung Cancer')" href="{{ url_for('resultss', name='Lung Cancer',year1=2000,year2=2017,NumOfPub=3000) }}">Lung Cancer</a>  </p>
+                    <p id="showMore" style="display: none;font-size:12px; " align="center">Publication years : <input type="number" align="center" style="font-size:12px" min="2000" max="2121" step="1" value="2000" id="tForm2" name = "year1"  /> to <input type="number" style="font-size:12px" min="2000" max="2121" step="1" value="2121" id="tForm3" name = "year2">  Number of Publications : <input  align="center" type="number" style="font-size:12px" step="1" value="500" max="500" id="tForm4" name = "NumOfPub"  />
+                    <p style="font-size:12px" align="center"><i> Examples: <a onclick="ShowLoading('polycystic ovary syndrome')" href="{{ url_for('resultss', name='PCOS',year1=2000,year2=2021,NumOfPub=500) }}">polycystic ovary syndrome</a>, <a onclick="ShowLoading('skin cancer')" href="{{ url_for('resultss', name='skin cancer',year1=2000,year2=2021,NumOfPub=500) }}">skin Cancer</a><i>, <a onclick="ShowLoading('Lung Cancer')" href="{{ url_for('resultss', name='Lung Cancer',year1=2000,year2=2021,NumOfPub=500) }}">Lung Cancer</a>  </p>
                     <p  align="center"><input type = "submit" value = "Search" /></p>
                 </dl>
       </form>

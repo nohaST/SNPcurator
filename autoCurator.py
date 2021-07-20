@@ -1,20 +1,21 @@
-﻿from Bio import Entrez
+﻿#from Bio import Entrez
 from urllib.error import HTTPError
 import time
 from Bio import Entrez
 import nltk
 import re
 from nltk.tokenize import sent_tokenize
-from spacy.en import English
+from spacy.lang.en import English
 import datetime
+#import os
 st=time.time()
 nlp = English()
 #print(time.time()  - st)
 curatedPapers=[]
 
-def getNationality(abs):
+def getNationality(abstract):
     places=[]
-    for ent in abs.ents:
+    for ent in abstract.ents:
         if (ent.label == 347 ):
             if ((str(ent) not in places) and len(str(ent)) > 3 ):
                 places.append(str(ent))
@@ -22,12 +23,12 @@ def getNationality(abs):
     return ' '.join(places)
 
 #actual one used for group Size
-def getcohortSzies(abs):
+def getcohortSzies(abstract):
     cohort = ['', '']
     numModifiers = []
     ControlKeywords = 'individuals control controls normal healthy'.split()
     Patientkeywords = 'individuals patients patient case cases women men subjects participants'.split()
-    for tok in abs:
+    for tok in abstract:
         #print(tok.dep_)
         if (tok.dep_ == 'nummod'):
             #print(tok.dep, tok.orth_, tok.head.text,tok.nbor(1).text,tok.nbor(2).text)
@@ -45,7 +46,7 @@ def getcohortSzies(abs):
         if (any(word in temp[1] for word in ControlKeywords)):
             try:
                 temp[0]=temp[0].replace(',', '')
-                x=int(temp[0])
+                #x=int(temp[0])
                 cohort[1] = temp[0]
                 #print("in control ", temp, cohort)
             except:
@@ -54,7 +55,7 @@ def getcohortSzies(abs):
         elif (any(word in temp[1] for word in Patientkeywords)):
             try:
                 temp[0] = temp[0].replace(',', '')
-                x = int(temp[0])
+                #x = int(temp[0])
                 cohort[0] = temp[0]
                 #print("in patient ", temp, cohort)
             except:
@@ -227,10 +228,9 @@ def getPubMedId(targetD,year1,year2,nPub):
 
     #targetD= "\"" + targetD + "\" AND ( (\"polymorphism, single nucleotide\"[MeSH Terms]) OR(\"genetic predisposition to disease\"[MeSH Terms]) OR \"genome-wide\" OR \"genome AND identification\" OR \"genome AND association\" OR \"candidate AND gene\" OR \"SNP\")"
     #targetD = targetD + "[All Fields] AND(\"Polymorphism, Single Nucleotide\"[Mesh Terms] OR \"Genetic Predisposition to Disease\"[Mesh Terms] OR \"Genome-Wide Association Study\"[Mesh Terms] OR \"genome-wide\" OR \"genome AND identification\" OR \"genome AND association\" OR \"candidate AND gene\")"
-
     targetD ="(("+"\""+year1+"\"[Date - Publication] : "+"\""+year2+"\"[Date - Publication]))"+"AND "+"\"" + targetD + "\" " +"AND(\"Polymorphism, Single Nucleotide\"[Mesh Terms] OR \"Genetic Predisposition to Disease\"[Mesh Terms] OR \"Genome-Wide Association Study\"[Mesh Terms])"
     Entrez.email = "n.s.tawfik@uu.nl"  # Always tell NCBI who you are
-    print("Searchig PubMed IDs relevant to keyword: ",targetD)
+    print("Searching PubMed IDs relevant to keyword: ",targetD)
     handle = Entrez.esearch(db="pubmed", term=targetD,RetMax=nPub)
     Rlist = Entrez.read(handle)
     print("The total number of Extracted Publications is " + Rlist["Count"])
@@ -266,21 +266,20 @@ def getPubMedArticle(IDs):
 
 
 def extractInfo(PaperRecords):
-    curatedPapers=[]
     j=0
     numberOfAbsWithSNP = 0
+    numberOfAbs = len(PaperRecords)
     for record in PaperRecords:
         # getabstract
         try:  # check for abstract
             abstract = record[0]['MedlineCitation']['Article']['Abstract']['AbstractText']
-        except KeyError as e:
+        except KeyError:
             continue
         abstractText = ""
         for k in abstract:
             abstractText += (str(k))
         sent = nltk.tokenize.wordpunct_tokenize(abstractText)
         SNPstr = ([w for w in set(sent) if w.startswith('rs')] or [w for w in set(sent) if w.startswith('ss')])
-        numberOfAbs=len(PaperRecords)
         if SNPstr:
             numberOfAbsWithSNP+=1
             # spaCy
@@ -317,7 +316,7 @@ def writeInfo(j,record,abstractText,population,patientSize,controlSize,SNPstr, p
     curatedPapers[j].append(0)  #extracted frequency
 
     if curatedPapers[j][2]:
-        x = curatedPapers[j][2][0].get('Day') + curatedPapers[j][2][0].get('Month') + curatedPapers[j][2][0].get('Year')
+        #x = curatedPapers[j][2][0].get('Day') + curatedPapers[j][2][0].get('Month') + curatedPapers[j][2][0].get('Year')
         x = curatedPapers[j][2][0].get('Day').zfill(2) + curatedPapers[j][2][0].get('Month').zfill(2) + curatedPapers[j][2][0].get('Year')
         try:
             curatedPapers[j][2] = datetime.datetime.strptime(x, "%d%b%Y").date()
@@ -332,31 +331,32 @@ def writeInfo(j,record,abstractText,population,patientSize,controlSize,SNPstr, p
 
 
 def curate(disease,year1,year2,nPub):
-    f = open('myfile.txt', 'w')
-    f.write(disease)
-    f.flush()
+    #f = open('myfile.txt', 'a')
+    #f.write(disease)
+    #f.flush()
     curatedPapers.clear()
     if '-' in disease:
         disease=disease +" OR "+ disease.replace("-", "")
-    st = time.time()
+    #st = time.time()
     IDlist=getPubMedId(disease,year1,year2,nPub)
-    f.write("\nTime to get IDs\n",)
+    #f.write("\nTime to get IDs\n",)
     #print(len(IDlist),IDlist)
-    f.write(str(time.time() - st))
-    f.flush()
-    st = time.time()
+    #f.write(str(time.time() - st))
+    #f.flush()
+    #st = time.time()
     PaperRecords=getPubMedArticle(IDlist)
-    f.write("\nTime to download records")
-    f.write(str(time.time() - st))
-    f.flush()
-    st = time.time()
+    #f.write("\nTime to download records")
+    #f.write(str(time.time() - st))
+    #f.flush()
+    #st = time.time()
     nAbs,nSP=extractInfo(PaperRecords)
     #getFrequency()
     #print(nAbs,nSP)
-    f.write("\nInformation extraction time")
-    f.write(str(time.time() - st))
-    f.flush()
+    #f.write("\nInformation extraction time")
+    #f.write(str(time.time() - st))
+    #f.flush()
     print(nAbs, nSP)
+    #f.close()
     return(curatedPapers,nAbs,nSP)
 
 #curate('SKIN PIGMENTATION','2000','2017', 3000)

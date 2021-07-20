@@ -1,4 +1,6 @@
 from flask import Flask, redirect, url_for, request, session, render_template
+import sys
+sys.path.insert(0,"/var/www/snpcurator/snpcurator/")
 from autoCurator import curate, nlp
 import time
 app = Flask(__name__)
@@ -33,7 +35,10 @@ def set_session():
 @app.route('/resultss', methods=['POST', 'GET'])
 def resultss():
     session['name']= request.args.get('name', None)
-    cPapers,nAbs,nSP = curate(session.get('name'), session['year1'], session['year2'], session['NumOfPub'])
+    session['year1'] = request.args.get('year1', None)
+    session['year2'] = request.args.get('year2', None)
+    session['NumOfPub'] = request.args.get('NumOfPub', None)
+    cPapers,nAbs,nSP = curate(session['name'], session['year1'], session['year2'], session['NumOfPub'])
     #print(len(cPapers))
     results = formulateSNP(cPapers)
     session['results'] = results[0]
@@ -123,4 +128,5 @@ app.secret_key = 'tsdhisiusdfdsfaSecsdfsdfrfghdetkey'
 if __name__ == "__main__":
     st = time.time()
     app.run(threaded=True, debug=True)
-    f.write("Run time in main",time.time()  - st)
+    '''with open('myfile.txt', 'a') as f:
+        f.write("Run time in main: " + str(time.time()  - st))'''

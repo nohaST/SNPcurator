@@ -40,16 +40,28 @@ def resultss():
     session['NumOfPub'] = request.args.get('NumOfPub', None)
     cPapers,nAbs,nSP = curate(session['name'], session['year1'], session['year2'], session['NumOfPub'])
     #print(len(cPapers))
-    results = formulateSNP(cPapers)
-    session['results'] = results[0]
-    session['PaperCount'] = results[1]
-    session['SNPcount'] = results[2]
+    formulated_results = formulateSNP(cPapers)
+    session['results'] = formulated_results[0]
+    session['PaperCount'] = formulated_results[1]
+    session['SNPcount'] = formulated_results[2]
     session['AbstractCnt'] = nAbs
     session['AbstractSNPCnt'] = nSP
     print("HEREs", session['AbstractCnt'], session['AbstractSNPCnt'])
-    print("resultss ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
-    return render_template("results.html",disease=session.get('name'), rows=session.get('results'),
-                           SNPCount=session.get('SNPcount'), PaperCount=session.get('PaperCount'),AbsrtactCount=session.get('AbstractCnt'),AbsrtactSNPCount=session.get('AbstractSNPCnt'))
+    snp_count = session.get('SNPcount')
+    paper_count = session.get('PaperCount')
+    print("resultss ", snp_count, " from ", paper_count, "Papers")
+    print('More parameters in resultss:')
+    name = session.get('name')
+    print('Name:', name, session['name'])
+    the_results = session.get('results')
+    print('Results:', the_results, session['results'])
+    abstract_count = session.get('AbstractCnt')
+    print('Abstract count:', abstract_count, session['AbstractCnt'])
+    abstract_snp_count = session.get('AbstractSNPCnt')
+    print('Abstract SNP count:', abstract_snp_count, session['AbstractSNPCnt'])
+    return render_template("results.html", disease=name, rows=the_results,
+                           SNPCount=snp_count, PaperCount=paper_count, AbsrtactCount=abstract_count,
+                           AbsrtactSNPCount=abstract_snp_count)
 
 @app.route('/results', methods=['POST', 'GET'])
 def results():

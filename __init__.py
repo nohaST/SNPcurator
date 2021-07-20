@@ -62,8 +62,8 @@ def results():
     session['SNPcount'] = results[2]
     session['AbstractCnt']=nAbs
     session['AbstractSNPCnt'] = nSP
-    print("HERE",session['AbstractCnt'],session['AbstractSNPCnt'])
-    print("results ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
+    print("HERE1",session['AbstractCnt'],session['AbstractSNPCnt'])
+    print("results1 ", session.get('SNPcount')," from ",session.get('PaperCount'), "Papers" )
     return render_template("results.html",disease=session.get('name'), rows=session.get('results'),
                            SNPCount=session.get('SNPcount'), PaperCount=session.get('PaperCount'),AbsrtactCount=session.get('AbstractCnt'),AbsrtactSNPCount=session.get('AbstractSNPCnt'))
 
